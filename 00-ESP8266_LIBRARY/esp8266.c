@@ -1406,7 +1406,10 @@ ESP8266_Result_t SendMACCommand(ESP8266_t* ESP8266, uint8_t* addr, const char* c
 /******************************************/
 ESP8266_Result_t ESP8266_Init(ESP8266_t* ESP8266, uint32_t baudrate) {
     uint8_t i;
-    
+
+    // Reset the working structure
+    memset(ESP8266, 0, sizeof(*ESP8266));
+
     ESP8266->Timeout = 0;                                   /* Save settings */    
     if (BUFFER_Init(&TMP_Buffer, ESP8266_TMPBUFFER_SIZE + 1, TMPBuffer)) {  /* Init temporary buffer */
         ESP8266_RETURNWITHSTATUS(ESP8266, ESP_NOHEAP);
