@@ -1423,7 +1423,9 @@ ESP8266_Result_t ESP8266_Init(ESP8266_t* ESP8266, uint32_t baudrate) {
     ESP8266_RESET_HIGH;                                     /* Set pin high */
     ESP8266_DELAYMS(ESP8266, 100);                          /* Delay for while */    
     ESP8266->Baudrate = baudrate;                           /* Save current baudrate */
-    ESP8266_LL_USARTInit(ESP8266->Baudrate);                /* Init USART */
+    if (ESP8266_LL_USARTInit(ESP8266->Baudrate)) {          /* Init USART */
+      ESP8266_RETURNWITHSTATUS(ESP8266, ESP_ERROR);
+    }
 #if ESP8266_USE_CTS
     ESP8266_LL_SetRTS(ESP_RTS_LOW);                         /* Set RTS low */
     RTSStatus = ESP_RTS_LOW;
