@@ -107,6 +107,10 @@ static ESP8266_APs_t ESP8266_APs;                           /* AP list */
 static char ConnectionData[ESP8266_CONNECTION_BUFFER_SIZE + 1]; /* Data array */
 #endif
 
+#ifndef ESP8266_FIRST_CLIENT_CONNECTION
+#define ESP8266_FIRST_CLIENT_CONNECTION 0
+#endif
+
 /* Buffers */
 static BUFFER_t TMP_Buffer;
 static BUFFER_t USART_Buffer;
@@ -849,14 +853,14 @@ ESP8266_Result_t StartClientConnection(
     ESP8266_CHECK_WIFICONNECTED(ESP8266);            		/* Check if connected to network */
     
     if (type == ESP8266_ConnectionType_SSL) {        		/* Only 1 SSL connection can be active at a time */
-        for (i = 0; i < ESP8266_MAX_CONNECTIONS; i++) {    	/* Check if any SSL connection exists and is active */
+        for (i = ESP8266_FIRST_CLIENT_CONNECTION; i < ESP8266_MAX_CONNECTIONS; i++) {    	/* Check if any SSL connection exists and is active */
             if (ESP8266->Connection[i].Flags.F.Active && ESP8266->Connection[i].Type == ESP8266_ConnectionType_SSL) {
                 ESP8266_RETURNWITHSTATUS(ESP8266, ESP_ERROR);	/* Return error, SSL connection already exists */
             }
         }
     }
     
-    for (i = 0; i < ESP8266_MAX_CONNECTIONS; i++) {    		/* Find available connection */
+    for (i = ESP8266_FIRST_CLIENT_CONNECTION; i < ESP8266_MAX_CONNECTIONS; i++) {    		/* Find available connection */
         if (!ESP8266->Connection[i].Flags.F.Active) {
             conn = i;                                		/* Save connection and start execution*/
             break;

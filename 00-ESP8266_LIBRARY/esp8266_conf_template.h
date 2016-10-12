@@ -187,6 +187,15 @@
 #define ESP8266_RTOS                              1
 
 /**
+ * \brief   Minimum ID of client connections
+ *
+ *          When using client and server connections, stability is increased by avoiding server connections using the same ID's as client
+ *          connections. Set this value to something more than 0 to minimize the risk of client connection ID's conflicting with server connection
+ *          ID's
+ */
+#define ESP8266_FIRST_CLIENT_CONNECTION           0
+
+/**
  * \}
  */
 
