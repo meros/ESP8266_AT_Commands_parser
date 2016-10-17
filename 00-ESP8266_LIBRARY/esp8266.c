@@ -2199,15 +2199,14 @@ ESP8266_Result_t ESP8266_GetAP(ESP8266_t* ESP8266) {
 }
 
 ESP8266_Result_t ESP8266_SetAP(ESP8266_t* ESP8266, ESP8266_APConfig_t* ESP8266_Config) {
-    uint8_t ecn, maxc, hid, sep = ',';
+    uint8_t ecn, sep = ',';
     char ch[4];
 
     if (                                                    /* Check input values */
         strlen(ESP8266_Config->SSID) > 64 ||
         strlen(ESP8266_Config->Pass) > 64 ||
         (ESP8266_Config->Ecn != ESP8266_Ecn_OPEN && strlen(ESP8266_Config->Pass) < 8) ||
-        ESP8266_Config->Ecn == ESP8266_Ecn_WEP ||
-        ESP8266_Config->MaxConnections < 1 || ESP8266_Config->MaxConnections > 4
+        ESP8266_Config->Ecn == ESP8266_Ecn_WEP
     ) {
         ESP8266_RETURNWITHSTATUS(ESP8266, ESP_ERROR);       /* Error */
     }
@@ -2217,8 +2216,6 @@ ESP8266_Result_t ESP8266_SetAP(ESP8266_t* ESP8266, ESP8266_APConfig_t* ESP8266_C
     
     Int2String(ch, ESP8266_Config->Channel);                /* Format number to string */
     ecn = (uint8_t)ESP8266_Config->Ecn + '0';
-    maxc = (uint8_t)ESP8266_Config->MaxConnections + '0';
-    hid = (uint8_t)ESP8266_Config->Hidden + '0';
     
     ESP8266_USARTSENDSTRING("AT+CWSAP_CUR=\"");             /* Send separate values */
     EscapeStringAndSend(ESP8266_Config->SSID);
@@ -2228,10 +2225,6 @@ ESP8266_Result_t ESP8266_SetAP(ESP8266_t* ESP8266, ESP8266_APConfig_t* ESP8266_C
     EscapeStringAndSend(ch);
     ESP8266_USARTSENDCHAR(&sep);
     ESP8266_USARTSENDCHAR(&ecn);
-    ESP8266_USARTSENDCHAR(&sep);
-    ESP8266_USARTSENDCHAR(&maxc);
-    ESP8266_USARTSENDCHAR(&sep);
-    ESP8266_USARTSENDCHAR(&hid);
     ESP8266_USARTSENDSTRING(ESP8266_CRLF);
     
     SendCommand(ESP8266, ESP8266_COMMAND_CWSAP, NULL, NULL);    /* Send command */
